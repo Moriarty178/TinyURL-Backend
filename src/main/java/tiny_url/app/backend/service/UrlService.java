@@ -1,14 +1,19 @@
 package tiny_url.app.backend.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.hash.BloomFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import tiny_url.app.backend.component.SnowflakeIdGenerator;
 import tiny_url.app.backend.entity.UrlEntity;
 import tiny_url.app.backend.repository.UrlRepository;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -18,6 +23,13 @@ public class UrlService {
     private final UrlRepository urlRepository;
     private final BloomFilter<String> shortUrlBloomFilter;
     private final SnowflakeIdGenerator idGenerator;
+    private final String TOPIC = "url-clicks";
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -33,12 +45,13 @@ public class UrlService {
         this.idGenerator = idGenerator; // Spring Inject bean vào - Cần tạo bean configuration để Spring quản lý SnowflakeIdGenerator
     }
 
+    // Func shortenUrl
     public String shortenUrl(String longUrl) {
         // kiểm tra longUrl
         Optional<UrlEntity> optionalUrl = urlRepository.findByLongUrl(longUrl);
 
         if (!optionalUrl.isPresent()) {
-//            Long id = Instant.now().toEpochMilli(); // ================
+            //Long id = Instant.now().toEpochMilli();
             long id;
             String shortUrl = "";
             do {
@@ -59,8 +72,6 @@ public class UrlService {
             decodeSnowflakeId(id);
             System.out.println("Generated ID: " + id);
             System.out.println("Binary ID: " + Long.toBinaryString(id));
-            System.out.println("TEST 1115710 " + encodeBase62(1115710L));
-
 
             // cập nhật Bloom Filter
             shortUrlBloomFilter.put(shortUrl);
@@ -78,6 +89,7 @@ public class UrlService {
         }
     }
 
+    // Encode Base62
     private String encodeBase62(Long id) {
         // chia id cho 62 tìm cơ số của lũy thừa x -> tim ký tự vị trí x tương ứng trong BASE62_ALPHABET
         StringBuilder shortUrl = new StringBuilder();
@@ -90,6 +102,7 @@ public class UrlService {
         return shortUrl.reverse().toString();
     }
 
+    // Decode Base62
     public void decodeSnowflakeId(long id) {
         long timestamp = (id >> 22) + 1672531200000L; // lấy 41 bits đầu
         long datacenterId = (id >> 17) & 0x1F; // lấy 5 bits tiếp theo
@@ -102,6 +115,7 @@ public class UrlService {
         System.out.println("Sequence: " + sequence);
     }
 
+    // Get original URL
     public String getLongUrl(String shortUrl) {
         String cachedUrl = (String) redisTemplate.opsForValue().get(PREFIX_REDIS + shortUrl);
         if (cachedUrl != null) {
@@ -128,4 +142,56 @@ public class UrlService {
 //        return null;
 
     }
+
+
+
+    // Func log click
+    public void logClick(String shortUrl, HttpServletRequest request) {
+        try {
+            Map<String, Object> logData = new HashMap<>();
+            logData.put("shortUrl", shortUrl);
+            logData.put("timestamp", Instant.now().toString());
+            logData.put("ip", request.getRemoteAddr());
+            logData.put("userAgent", request.getHeader("User-Agent"));
+
+            String logJson = objectMapper.writeValueAsString(logData);
+
+            kafkaTemplate.send(TOPIC, logJson);
+            System.out.println("📤 Log sent to Kafka: " + logJson);
+        } catch (Exception e) {
+            System.err.println("❌ JSON Serialization Error: " + e.getMessage());
+        }
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

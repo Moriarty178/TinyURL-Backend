@@ -1,5 +1,6 @@
 package tiny_url.app.backend.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +32,19 @@ public class UrlController {
 
     // API get shortURL đã tạo
     @GetMapping("/{shortUrl}")
-    public ResponseEntity<?> getShortUrl(@PathVariable String shortUrl) {
+    public ResponseEntity<?> getShortUrl(@PathVariable String shortUrl, HttpServletRequest request) {
         String longUrl = urlService.getLongUrl(shortUrl);
+        if (longUrl != null) {
+            // ghi log click
+            urlService.logClick(shortUrl, request);
 
-        // Điều hướng đến đường dẫn gốc (longUrl)
-        return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT)
-                .header("Location", longUrl)
-                .build();
+            // Điều hướng đến đường dẫn gốc (longUrl)
+            return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT)
+                    .header("Location", longUrl)
+                    .build();
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
 

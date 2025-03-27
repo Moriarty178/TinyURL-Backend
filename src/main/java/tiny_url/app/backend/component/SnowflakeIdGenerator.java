@@ -64,58 +64,6 @@ public class SnowflakeIdGenerator {
 }
 
 
-
-//
-//package tiny_url.app.backend.component;
-//
-//public class SnowflakeIdGenerator {
-//    private static final long EPOCH = 1672531200000L; // 2023-01-01 00:00:00 GMT
-//    private static final long MACHINE_ID_BITS = 10;
-//    private static final long SEQUENCE_BITS = 12;
-//
-//    private static final long MAX_MACHINE_ID = (1L << MACHINE_ID_BITS) - 1;
-//    private static final long MAX_SEQUENCE = (1L << SEQUENCE_BITS) - 1;
-//
-//    private static final long MACHINE_ID_SHIFT = SEQUENCE_BITS;
-//    private static final long TIMESTAMP_SHIFT = MACHINE_ID_BITS + SEQUENCE_BITS;
-//
-//    private final long machineId;
-//    private long lastTimestamp = -1L;
-//    private long sequence = 0L;
-//
-//    public SnowflakeIdGenerator(long machineId) {
-//        if (machineId > MAX_MACHINE_ID) {
-//            throw new IllegalArgumentException("Machine ID vượt quá giới hạn: " + MAX_MACHINE_ID);
-//        }
-//        this.machineId = machineId;
-//    }
-//
-//    public synchronized long nextId() {
-//        long currentTimestamp = System.currentTimeMillis();
-//
-//        if (currentTimestamp < lastTimestamp) {
-//            throw new RuntimeException("Clock moved backwards. Đợi thời gian đồng bộ!");
-//        }
-//
-//        if (currentTimestamp == lastTimestamp) {
-//            sequence = (sequence + 1) & MAX_SEQUENCE;
-//            if (sequence == 0) {
-//                while (currentTimestamp <= lastTimestamp) {
-//                    currentTimestamp = System.currentTimeMillis();
-//                }
-//            }
-//        } else {
-//            sequence = 0;
-//        }
-//
-//        lastTimestamp = currentTimestamp;
-//        return ((currentTimestamp - EPOCH) << TIMESTAMP_SHIFT) | (machineId << MACHINE_ID_SHIFT) | sequence;
-//    }
-//}
-
-
-
-
 //Toán tử:
 //<< (Shif trái): được sử dụng để dịch các bits của một số nguyên sang trái vd: x= 5 (101) khi đó x << 3 <=> 101 000 = 40
 //& (And): thực hiện phép toán AND bit-by-bit giữa 2 số nguyên. Kết quả là một số nguyên z có các bit được đặt thành 1 khi và chỉ khi 2 it tương ứng của x và y đều là 1.

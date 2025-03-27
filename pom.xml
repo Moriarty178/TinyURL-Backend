@@ -77,6 +77,21 @@
 			<artifactId>guava</artifactId>
 			<version>32.0.0-jre</version>
 		</dependency>
+
+		<!-- Kafka -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
+		<!-- Elastic Search -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+		</dependency>
+
+
+
 	</dependencies>
 
 	<build>
