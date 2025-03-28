@@ -11,7 +11,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 snowflake.machine-id=${machine:8}
 # 5 bits => s^5 = 32 datacenter (MAX)
 snowflake.datacenter-id=${datacenter:9}
-server.port=${port:8080}
+
 redis.tiny-url.host=127.0.0.1
 redis.tiny-url.port=6379
 
