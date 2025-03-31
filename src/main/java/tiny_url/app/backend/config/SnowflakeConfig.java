@@ -13,7 +13,7 @@ public class SnowflakeConfig {
     @Value("${snowflake.datacenter-id}")
     private long datacenterId;
 
-    @Bean// tạo bean configuration để Spring quản lý SnowflakeIdGenerator và Inject nó vào UrlService
+    @Bean// tạo bean configuration để Spring quản lý SnowflakeIdGenerator và Inject nó vào Constructor của bất kỳ component nào (controller, service, ...), (th này là UrlService)
     public SnowflakeIdGenerator snowflakeIdGenerator() {
         System.out.println("🚀 Datacenter ID: " + datacenterId);
         System.out.println("🚀 Machine ID: " + machineId);
