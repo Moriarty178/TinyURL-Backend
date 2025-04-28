@@ -24,8 +24,8 @@ public class RedisConfig {
         return new LettuceConnectionFactory(host, port);
     }
 
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    @Bean // RedisConnectionFactory được inject tự động vào RedisTemplate
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) { // Bean có tham số: Spring tự inject Bean (RedisConnectionFactory) đã có trong Context vào làm tham số Cho "Bean có tham số".
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer(StandardCharsets.UTF_8));

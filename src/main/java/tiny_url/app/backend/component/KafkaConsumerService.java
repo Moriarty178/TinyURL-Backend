@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
+//@Component
 public class KafkaConsumerService {
 
     @Autowired
@@ -27,8 +27,8 @@ public class KafkaConsumerService {
             Document document = Document.from(logMap);
 
             // Lưu vào Elasticsearch (index = "click_logs)
-            elasticsearchOperations.save(document, IndexCoordinates.of("click_logs"));
-            System.out.println("✅ Log saved to Elasticsearch: " + logMap);
+            // elasticsearchOperations.save(document, IndexCoordinates.of("click_logs"));
+            // System.out.println("✅ Log saved to Elasticsearch: " + logMap);
         } catch (Exception e) {
             System.err.println("❌ Error saving log to Elasticsearch: " + e.getMessage());
         }

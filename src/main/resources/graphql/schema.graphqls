@@ -1,0 +1,24 @@
+type Query { # Dùng cho những thằng đọc dữ liệu -> read only
+    getParamList: ResponseDP!
+    getLongUrl(shortUrl: String!): String!
+    getQRCode(shortUrl: String!): String!
+    getAllShortUrl: [ShortenResponseDP]
+    getAllLongUrl: [String]
+}
+
+type Mutation { # Dùng cho những thằng thay đổi dữ lệu -> write (update, create, delete)
+    shortenUrl(longUrl: String!): ShortenResponseDP!
+    shortenUrl1(longUrl: String!): ResponseDP!
+}
+
+type ResponseDP {
+    code: String
+    message: String
+    data: String
+}
+
+type ShortenResponseDP {
+    EC: String!
+    MS: String!
+    data: String!
+}

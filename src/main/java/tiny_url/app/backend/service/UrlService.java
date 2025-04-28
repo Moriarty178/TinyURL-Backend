@@ -7,16 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import tiny_url.app.backend.common.Constants;
+import tiny_url.app.backend.common.Response;
 import tiny_url.app.backend.component.SnowflakeIdGenerator;
 import tiny_url.app.backend.entity.UrlEntity;
 import tiny_url.app.backend.repository.UrlRepository;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class UrlService {
@@ -28,8 +29,8 @@ public class UrlService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+//    @Autowired
+//    private KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -59,12 +60,8 @@ public class UrlService {
                 shortUrl = encodeBase62(id);
 
                 // kiểm tra shortURL sau khi tạo đã tồn tại chưa, nếu ko tồn tại -> pass -> lưu vào db & cập nhật Bloom Filter.
-                if (!shortUrlBloomFilter.mightContain(shortUrl)) {
-                    break;
-                }
                 // nếu tồn tại => tạo lại (dùng Snow Flake thì khó mà trung được, trùng xảy ra khi ta lấy một phần của shortUrl - đương nhiên là trong điều kiện lượng người dùng, yêu cầu lớn)
-            }
-            while (true);
+            } while (shortUrlBloomFilter.mightContain(shortUrl));
 
             //lưu vào db
             UrlEntity urlEntity = new UrlEntity(id, shortUrl, longUrl);
@@ -95,8 +92,7 @@ public class UrlService {
         StringBuilder shortUrl = new StringBuilder();
         while(id > 0) {
             shortUrl.append(BASE62_ALPHABET.charAt((int) (id % 62)));
-
-            id /=62;
+            id /= 62;
         }
 
         return shortUrl.reverse().toString();
@@ -129,39 +125,35 @@ public class UrlService {
 
             return longUrl;
         }
-
-//        UrlEntity urlEntity = urlRepository.findByShortUrl(shortUrl).get();
-//        if(urlEntity != null) {
-//            String longUrl = urlEntity.getLongUrl();
-//
-//            // cached
-//            redisTemplate.opsForValue().set(PREFIX_REDIS + shortUrl, longUrl, 24, TimeUnit.HOURS);
-//            return longUrl;
-//        }
-//
-//        return null;
-
     }
 
+    public List<UrlEntity> findAllUrl() {
+        return urlRepository.findAll();
+    }
 
+    public List<String> getAllLongUrl() {
+        return urlRepository.findAll().stream()
+                .map(UrlEntity::getLongUrl)
+                .collect(Collectors.toList());
+    }
 
     // Func log click
-    public void logClick(String shortUrl, HttpServletRequest request) {
-        try {
-            Map<String, Object> logData = new HashMap<>();
-            logData.put("shortUrl", shortUrl);
-            logData.put("timestamp", Instant.now().toString());
-            logData.put("ip", request.getRemoteAddr());
-            logData.put("userAgent", request.getHeader("User-Agent"));
-
-            String logJson = objectMapper.writeValueAsString(logData);
-
-            kafkaTemplate.send(TOPIC, logJson);
-            System.out.println("📤 Log sent to Kafka: " + logJson);
-        } catch (Exception e) {
-            System.err.println("❌ JSON Serialization Error: " + e.getMessage());
-        }
-    }
+//    public void logClick(String shortUrl, HttpServletRequest request) {
+//        try {
+//            Map<String, Object> logData = new HashMap<>();
+//            logData.put("shortUrl", shortUrl);
+//            logData.put("timestamp", Instant.now().toString());
+//            logData.put("ip", request.getRemoteAddr());
+//            logData.put("userAgent", request.getHeader("User-Agent"));
+//
+//            String logJson = objectMapper.writeValueAsString(logData);
+//
+//            kafkaTemplate.send(TOPIC, logJson);
+//            System.out.println("📤 Log sent to Kafka: " + logJson);
+//        } catch (Exception e) {
+//            System.err.println("❌ JSON Serialization Error: " + e.getMessage());
+//        }
+//    }
 
 }
 

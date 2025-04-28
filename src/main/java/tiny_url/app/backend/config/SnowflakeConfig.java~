@@ -17,6 +17,6 @@ public class SnowflakeConfig {
     public SnowflakeIdGenerator snowflakeIdGenerator() {
         System.out.println("🚀 Datacenter ID: " + datacenterId);
         System.out.println("🚀 Machine ID: " + machineId);
-        return new SnowflakeIdGenerator(datacenterId, machineId); // khởi tạo 1 instance SnowflakeIdGenerator và trả ra ngoài.
+        return new SnowflakeIdGenerator(datacenterId, machineId); // khởi tạo 1 instance SnowflakeIdGenerator và trả ra ngoài
     }
 }

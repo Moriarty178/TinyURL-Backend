@@ -1,13 +1,53 @@
 package tiny_url.app.backend;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.annotation.Id;
+import tiny_url.app.backend.annotation.ORMQueryGenerator;
+import tiny_url.app.backend.entity.UrlEntity;
+import tiny_url.app.backend.entity.User;
+
+import java.lang.reflect.Field;
 
 @SpringBootApplication
 public class BackendApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BackendApplication.class, args);
+	public static void main(String[] args) throws IllegalAccessException {
+		ApplicationContext context = SpringApplication.run(BackendApplication.class, args);
+//
+//		ORMQueryGenerator ormQueryGenerator = context.getBean(ORMQueryGenerator.class);
+//
+//		User user = new User("Moriarty", 1L).setValueEmail("moriarty@gmail.com");
+//
+//		System.out.println("Câu truy vấn được tạo khi sử dụng @MyEntity và @MyColumn: " + ORMQueryGenerator.generateInsertQuery(user));
+//
+//		UrlEntity url = new UrlEntity();
+//		url.setId(99L);
+//		url.setLongUrl("https://www.epicquotes.com/top-15-mr-robot-quotes-of-all-time/");
+//		url.setShortUrl("http://localhost:8080/api/v1/tiny-url/MNpGk67pLs");
+//
+//		if (url.getClass().isAnnotationPresent(Entity.class)) {
+//			Entity entity = url.getClass().getAnnotation(Entity.class);
+//			Table table = url.getClass().getAnnotation(Table.class);
+//			String nameTable = table.name();
+//			String nameId = "";
+//			Object value;
+//
+//			for (Field field : url.getClass().getDeclaredFields()) {
+//				if (field.isAnnotationPresent(Id.class)) {
+//					nameId = field.getName();
+//					value = field.get(url);
+//				}
+//			}
+//
+//			Long id = 1L;
+//			String sql = "SELECT * FROM " + nameTable + " WHERE " + nameId + " = " + String.valueOf(id);
+//			System.out.println("SQL with @Entity & @Id: " + sql);
+//		}
+
 	}
 
 }

@@ -1,5 +1,6 @@
 package tiny_url.app.backend.component;
 
+
 public class SnowflakeIdGenerator {
     private static final long EPOCH = 1672531200000L; // 2023-01-01 00:00:00 GMT
     private static final long TIMESTAMP_BITS = 41;
@@ -46,7 +47,7 @@ public class SnowflakeIdGenerator {
                     currentTimestamp = System.currentTimeMillis();
                 }
             }
-        } else { // có nghĩa là đã có một khoảng thời gian trôi qua kể từ khi Snowflake ID cuối cùng được tạo MÀ "sequence" chỉ đếm trong mỗi Millis nên nó cần ặt lại về 0, đsẵn sàng tạo ra một chuỗi Snowflake ID mới với sequence = [0, 4095].
+        } else { // có nghĩa là đã có một khoảng thời gian trôi qua kể từ khi Snowflake ID cuối cùng được tạo MÀ "sequence" chỉ đếm trong mỗi Millis nên nó cần đặt lại về 0, đsẵn sàng tạo ra một chuỗi Snowflake ID mới với sequence = [0, 4095].
             sequence = 0;
         }
         // Còn trong TH thông thường, luồng như sau:
@@ -66,7 +67,7 @@ public class SnowflakeIdGenerator {
 
 //Toán tử:
 //<< (Shif trái): được sử dụng để dịch các bits của một số nguyên sang trái vd: x= 5 (101) khi đó x << 3 <=> 101 000 = 40
-//& (And): thực hiện phép toán AND bit-by-bit giữa 2 số nguyên. Kết quả là một số nguyên z có các bit được đặt thành 1 khi và chỉ khi 2 it tương ứng của x và y đều là 1.
+//& (And): thực hiện phép toán AND bit-by-bit giữa 2 số nguyên. Kết quả là một số nguyên z có các bit được đặt thành 1 khi và chỉ khi 2 bit tương ứng của x và y đều là 1.
 //    vd: x = 5 (101), y = 3 (011)
 //    z = x & y = (001) = 1
 //| (Or) giống phép cộng: thực hiện phép toán Or bit-by-bit giữa 2 số nguyên. Kết quả là số nguyên z với các bit là 1 khi 1 trong 2 bit tương ứng của x, y là 1.

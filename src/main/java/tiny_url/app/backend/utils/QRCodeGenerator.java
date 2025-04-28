@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class QRCodeGenerator {
-    public static byte[]generatorQRCodeImage(String text, int width, int height) throws WriterException, IOException {
+    public static byte[] generatorQRCodeImage(String text, int width, int height) throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");

@@ -98,7 +98,7 @@ Có hai phương pháp chính:
 
 #### Generate shorten URL
 
-```http
+```sh
   POST /api/v1/tiny-url/shorten
 ```
 
@@ -110,7 +110,7 @@ Có hai phương pháp chính:
 
 #### Get original URL (Auto redirect)
 
-```http
+```sh
   GET /api/v1/tiny-url/${longUrl}
 ```
 
@@ -121,6 +121,3 @@ Có hai phương pháp chính:
 
 # Authors
 - [@Moriarty178](https://github.com/Moriarty178)
-
-## Đóng góp
-Mọi đóng góp để cải thiện dự án đều được hoan nghênh! Vui lòng mở issue hoặc gửi pull request.
